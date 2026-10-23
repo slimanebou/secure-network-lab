@@ -1,0 +1,8 @@
+# Clés privées : ne JAMAIS publier
+*.key
+*private*
+wg0.conf
+
+# Captures réseau brutes (contiennent des IP et des données)
+*.pcap
+*.pcapng
