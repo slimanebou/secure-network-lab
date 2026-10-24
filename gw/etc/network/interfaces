@@ -1,0 +1,23 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+#Activer auto interface ens33 
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
+
+
+# DMZ - vmnet2
+auto ens37
+iface ens37 inet static
+    address 10.10.10.1/24
+
+# LAN - vmnet3
+auto ens38
+iface ens38 inet static
+    address 10.10.20.1/24
