@@ -16,6 +16,8 @@ WEB=10.10.10.10              # Serveur web en DMZ
 ADMIN_NET=192.168.204.0/24   # TEMPORAIRE : SSH depuis l'hôte Windows via le NAT
                              # (remplacé par le VPN WireGuard en phase 4)
 
+LOG_LIMIT="5/min"            # nombre max de lignes de log par minute
+
 # ---------- Mode start : appliquer la politique ----------
 start() {
   # 1. Repartir de zéro
@@ -56,6 +58,12 @@ start() {
   iptables -A FORWARD -i "$WAN" -o "$DMZ" -d "$WEB" -p tcp -m multiport --dports 80,443 -j ACCEPT
 
   # DMZ -> LAN : AUCUNE règle, donc bloqué par la politique DROP
+  
+  # 4bis. Journaliser ce qui va être jeté (dernières règles des chaînes)
+  iptables -A INPUT   -m limit --limit "$LOG_LIMIT" --limit-burst 10 \
+           -j LOG --log-prefix "FW-DROP-IN: "  --log-level 4
+  iptables -A FORWARD -m limit --limit "$LOG_LIMIT" --limit-burst 10 \
+           -j LOG --log-prefix "FW-DROP-FWD: " --log-level 4
 
   # 5. NAT
   iptables -t nat -A PREROUTING  -i "$WAN" -p tcp -m multiport --dports 80,443 -j DNAT --to-destination "$WEB"
