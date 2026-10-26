@@ -1,0 +1,15 @@
+[Unit]
+Description=Pare-feu iptables de gw (Secure Network Lab)
+Documentation=https://github.com/slimanebou/secure-network-lab
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/firewall.sh start
+ExecReload=/usr/local/sbin/firewall.sh start
+ExecStop=/usr/local/sbin/firewall.sh stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
