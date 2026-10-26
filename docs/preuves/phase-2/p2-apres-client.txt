@@ -1,0 +1,13 @@
+$ nc -zv -w3 10.10.10.10 22
+nc: connect to 10.10.10.10 port 22 (tcp) timed out: Operation now in progress
+$ nc -zv -w3 10.10.10.10 80
+nc: connect to 10.10.10.10 port 80 (tcp) failed: Connection refused
+$ nc -zv -w3 10.10.20.1 22
+nc: connect to 10.10.20.1 port 22 (tcp) timed out: Operation now in progress
+$ ping -c2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=11.5 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 1 received, 50% packet loss, time 1013ms
+rtt min/avg/max/mdev = 11.516/11.516/11.516/0.000 ms

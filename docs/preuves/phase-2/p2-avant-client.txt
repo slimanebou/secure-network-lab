@@ -1,0 +1,14 @@
+$ nc -zv -w3 10.10.10.10 22
+Connection to 10.10.10.10 22 port [tcp/ssh] succeeded!
+$ nc -zv -w3 10.10.10.10 80
+nc: connect to 10.10.10.10 port 80 (tcp) failed: Connection refused
+$ nc -zv -w3 10.10.20.1 22
+Connection to 10.10.20.1 22 port [tcp/ssh] succeeded!
+$ ping -c2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=127 time=47.0 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=16.2 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 16.247/31.622/46.998/15.375 ms
