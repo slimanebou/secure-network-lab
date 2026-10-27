@@ -16,8 +16,6 @@ VPN_PORT=51820               # Port UDP de WireGuard
 
 INT_NETS=10.10.0.0/16        # DMZ + LAN
 WEB=10.10.10.10              # Serveur web en DMZ
-ADMIN_NET=192.168.204.0/24   # TEMPORAIRE : SSH depuis l'hôte Windows via le NAT
-                             # (remplacé par le VPN WireGuard en phase 4)
 
 LOG_LIMIT="5/min"            # nombre max de lignes de log par minute
 
@@ -37,7 +35,6 @@ start() {
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
-  iptables -A INPUT -i "$WAN" -s "$ADMIN_NET" -p tcp --dport 22 -j ACCEPT
 
   # WireGuard : le tunnel peut être joint depuis le WAN
   iptables -A INPUT -i "$WAN" -p udp --dport "$VPN_PORT" -j ACCEPT
