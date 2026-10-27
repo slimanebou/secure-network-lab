@@ -1,0 +1,6 @@
+maxauthtries 3
+permitrootlogin no
+passwordauthentication no
+kbdinteractiveauthentication no
+allowtcpforwarding yes
+allowusers bouaroua@10.8.0.0/24

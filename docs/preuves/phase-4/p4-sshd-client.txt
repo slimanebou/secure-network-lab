@@ -1,0 +1,6 @@
+maxauthtries 3
+permitrootlogin no
+passwordauthentication no
+kbdinteractiveauthentication no
+allowtcpforwarding no
+allowusers bouaroua@10.10.20.1

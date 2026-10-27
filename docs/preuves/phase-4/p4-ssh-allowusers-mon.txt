@@ -1,0 +1,1 @@
+Oct 27 19:18:19 mon sshd-session[2006]: User bouaroua from 10.10.20.10 not allowed because not listed in AllowUsers

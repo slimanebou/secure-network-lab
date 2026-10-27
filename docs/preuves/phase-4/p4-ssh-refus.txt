@@ -1,0 +1,4 @@
+$ ssh (mot de passe force) gw
+bouaroua@10.8.0.1: Permission denied (publickey).
+$ ssh root@web (via gw)
+root@10.10.10.10: Permission denied (publickey).
