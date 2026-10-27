@@ -1,0 +1,8 @@
+[Interface]
+PrivateKey = <CLE_PRIVEE_ADMIN>         # générée par le client WireGuard
+Address = 10.8.0.2/32
+
+[Peer]
+PublicKey = <CLE_PUBLIQUE_GW>
+AllowedIPs = 10.8.0.0/24
+Endpoint = <IP_WAN_GW>:51820

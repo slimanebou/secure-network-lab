@@ -1,0 +1,13 @@
+$ ip -br a show wg0
+wg0              UNKNOWN        10.8.0.1/24 
+$ wg show
+interface: wg0
+  public key: p5ZbgUj5NuwvuLW9ZKONZWFA4xArqj2xnVW509rA61I=
+  private key: (hidden)
+  listening port: 51820
+
+peer: NdHy7z70Exk2svNNvp7jsz+20eNItMap52kfZ+bARFA=
+  endpoint: 192.168.204.1:62074
+  allowed ips: 10.8.0.2/32
+  latest handshake: 2 minutes, 46 seconds ago
+  transfer: 15.98 KiB received, 13.29 KiB sent

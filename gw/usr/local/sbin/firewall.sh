@@ -11,6 +11,9 @@ WAN=ens33                    # Carte NAT VMware (Internet)
 DMZ=ens37                    # Carte DMZ  (vmnet2)
 LAN=ens38                    # Carte LAN  (vmnet3)
 
+VPN=wg0                      # Carte du tunnel WireGuard
+VPN_PORT=51820               # Port UDP de WireGuard
+
 INT_NETS=10.10.0.0/16        # DMZ + LAN
 WEB=10.10.10.10              # Serveur web en DMZ
 ADMIN_NET=192.168.204.0/24   # TEMPORAIRE : SSH depuis l'hôte Windows via le NAT
@@ -35,6 +38,13 @@ start() {
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
   iptables -A INPUT -i "$WAN" -s "$ADMIN_NET" -p tcp --dport 22 -j ACCEPT
+
+  # WireGuard : le tunnel peut être joint depuis le WAN
+  iptables -A INPUT -i "$WAN" -p udp --dport "$VPN_PORT" -j ACCEPT
+  # Dans le tunnel : SSH et ping vers gw
+  iptables -A INPUT -i "$VPN" -p tcp --dport 22 -j ACCEPT
+  iptables -A INPUT -i "$VPN" -p icmp --icmp-type echo-request -j ACCEPT
+
   iptables -A INPUT -i "$DMZ" -p icmp --icmp-type echo-request -j ACCEPT
   iptables -A INPUT -i "$LAN" -p icmp --icmp-type echo-request -j ACCEPT
 
