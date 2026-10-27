@@ -1,0 +1,18 @@
+== gw ==
+debug1: Authentications that can continue: publickey,password
+Authenticated to 192.168.204.140 ([192.168.204.140]:22) using "publickey".
+== web ==
+debug1: Authentications that can continue: publickey,password
+Authenticated to 192.168.204.140 ([192.168.204.140]:22) using "publickey".
+debug1: Authentications that can continue: publickey,password
+Authenticated to 10.10.10.10 (via proxy) using "publickey".
+== client ==
+debug1: Authentications that can continue: publickey,password
+Authenticated to 192.168.204.140 ([192.168.204.140]:22) using "publickey".
+debug1: Authentications that can continue: publickey,password
+Authenticated to 10.10.20.10 (via proxy) using "publickey".
+== mon ==
+debug1: Authentications that can continue: publickey,password
+Authenticated to 192.168.204.140 ([192.168.204.140]:22) using "publickey".
+debug1: Authentications that can continue: publickey,password
+Authenticated to 10.10.20.20 (via proxy) using "publickey".
