@@ -1,0 +1,16 @@
+# ca.cnf - Configuration de la CA racine du Secure Network Lab
+
+[ req ]
+distinguished_name = dn
+prompt             = no
+x509_extensions    = v3_ca
+
+[ dn ]
+C  = FR
+O  = Secure Network Lab
+CN = Secure Network Lab Root CA
+
+[ v3_ca ]
+basicConstraints     = critical, CA:TRUE, pathlen:0
+keyUsage             = critical, keyCertSign, cRLSign
+subjectKeyIdentifier = hash

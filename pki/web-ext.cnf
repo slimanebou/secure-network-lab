@@ -1,0 +1,7 @@
+# web-ext.cnf - Extensions appliquées par la CA au certificat de web
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid, issuer
+subjectAltName         = DNS:web.lab.internal, DNS:web, IP:10.10.10.10, IP:192.168.204.140

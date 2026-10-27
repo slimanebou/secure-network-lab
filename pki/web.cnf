@@ -1,0 +1,20 @@
+# web.cnf - Demande de certificat pour le serveur web
+
+[ req ]
+distinguished_name = dn
+prompt             = no
+req_extensions     = v3_req
+
+[ dn ]
+C  = FR
+O  = Secure Network Lab
+CN = web.lab.internal
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = web.lab.internal
+DNS.2 = web
+IP.1  = 10.10.10.10
+IP.2  = 192.168.204.140
