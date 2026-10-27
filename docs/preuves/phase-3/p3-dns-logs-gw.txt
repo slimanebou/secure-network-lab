@@ -1,0 +1,15 @@
+Oct 27 13:29:34 gw dnsmasq[2051]: query[A] deb.debian.org from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[A] client from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[SRV] _http._tcp.deb.debian.org from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[SRV] _http._tcp.security.debian.org from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[A] debian.map.fastlydns.net from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[AAAA] debian.map.fastlydns.net from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[A] debian.map.fastlydns.net from 10.10.10.10
+Oct 27 13:29:35 gw dnsmasq[2051]: query[AAAA] debian.map.fastlydns.net from 10.10.10.10
+Oct 27 13:31:23 gw dnsmasq[2051]: query[A] web.lab.internal from 10.10.20.10
+Oct 27 13:31:23 gw dnsmasq[2051]: query[A] web.lab.internal from 10.10.20.10
+Oct 27 13:31:23 gw dnsmasq[2051]: query[AAAA] web.lab.internal from 10.10.20.10
+Oct 27 13:31:23 gw dnsmasq[2051]: query[PTR] 10.10.10.10.in-addr.arpa from 10.10.20.10
+Oct 27 13:31:24 gw dnsmasq[2051]: query[A] web.lab.internal from 10.10.20.10
+Oct 27 13:31:24 gw dnsmasq[2051]: query[AAAA] web.lab.internal from 10.10.20.10
+Oct 27 13:31:25 gw dnsmasq[2051]: query[A] deb.debian.org from 10.10.20.10

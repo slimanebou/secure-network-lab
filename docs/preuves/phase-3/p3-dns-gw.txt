@@ -1,0 +1,18 @@
+$ ss -ulnp | grep :53
+UNCONN 0      0                             127.0.0.1:53         0.0.0.0:*    users:(("dnsmasq",pid=2051,fd=8))     
+UNCONN 0      0                            10.10.10.1:53         0.0.0.0:*    users:(("dnsmasq",pid=2051,fd=6))     
+UNCONN 0      0                            10.10.20.1:53         0.0.0.0:*    users:(("dnsmasq",pid=2051,fd=4))     
+UNCONN 0      0                               0.0.0.0:5353       0.0.0.0:*    users:(("avahi-daemon",pid=794,fd=12))
+UNCONN 0      0                                 [::1]:53            [::]:*    users:(("dnsmasq",pid=2051,fd=14))    
+UNCONN 0      0      [fe80::20c:29ff:feae:7611]%ens37:53            [::]:*    users:(("dnsmasq",pid=2051,fd=12))    
+UNCONN 0      0      [fe80::20c:29ff:feae:761b]%ens38:53            [::]:*    users:(("dnsmasq",pid=2051,fd=10))    
+UNCONN 0      0                                  [::]:5353          [::]:*    users:(("avahi-daemon",pid=794,fd=13))
+$ dig @10.10.20.1 web.lab.internal +short
+10.10.10.10
+$ dig @10.10.20.1 mon +short
+10.10.20.20
+$ dig @10.10.20.1 nexiste.lab.internal
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 15279
+$ dig @10.10.20.1 deb.debian.org +short
+debian.map.fastlydns.net.
+151.101.122.132

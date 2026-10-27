@@ -1,0 +1,27 @@
+$ cat /etc/resolv.conf
+nameserver 10.10.20.1
+search lab.internal
+$ dig web.lab.internal +short
+10.10.10.10
+$ ping -c2 web
+PING web.lab.internal (10.10.10.10) 56(84) bytes of data.
+64 bytes from web.lab.internal (10.10.10.10): icmp_seq=1 ttl=63 time=54.8 ms
+64 bytes from web.lab.internal (10.10.10.10): icmp_seq=2 ttl=63 time=92.7 ms
+
+--- web.lab.internal ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 54.777/73.744/92.712/18.967 ms
+$ curl -sI http://web.lab.internal
+HTTP/1.1 200 OK
+Server: nginx
+Date: Tue, 27 Oct 2026 12:31:24 GMT
+Content-Type: text/html
+Content-Length: 300
+Last-Modified: Mon, 26 Oct 2026 23:12:33 GMT
+Connection: keep-alive
+ETag: "6adfde61-12c"
+Accept-Ranges: bytes
+
+$ dig deb.debian.org +short
+debian.map.fastlydns.net.
+151.101.122.132

@@ -38,6 +38,12 @@ start() {
   iptables -A INPUT -i "$DMZ" -p icmp --icmp-type echo-request -j ACCEPT
   iptables -A INPUT -i "$LAN" -p icmp --icmp-type echo-request -j ACCEPT
 
+  # DNS (dnsmasq) pour la DMZ et le LAN
+  iptables -A INPUT -i "$DMZ" -p udp --dport 53 -j ACCEPT
+  iptables -A INPUT -i "$DMZ" -p tcp --dport 53 -j ACCEPT
+  iptables -A INPUT -i "$LAN" -p udp --dport 53 -j ACCEPT
+  iptables -A INPUT -i "$LAN" -p tcp --dport 53 -j ACCEPT
+
   # 4. FORWARD : ce qui TRAVERSE gw
   iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
@@ -45,9 +51,9 @@ start() {
   # LAN -> Internet : tout
   iptables -A FORWARD -i "$LAN" -o "$WAN" -j ACCEPT
 
-  # DMZ -> Internet : uniquement DNS, HTTP/HTTPS, NTP et ping
-  iptables -A FORWARD -i "$DMZ" -o "$WAN" -p udp -m multiport --dports 53,123 -j ACCEPT
-  iptables -A FORWARD -i "$DMZ" -o "$WAN" -p tcp -m multiport --dports 53,80,443 -j ACCEPT
+  # DMZ -> Internet : uniquement HTTP/HTTPS, NTP et ping (le DNS passe par gw)
+  iptables -A FORWARD -i "$DMZ" -o "$WAN" -p udp --dport 123 -j ACCEPT
+  iptables -A FORWARD -i "$DMZ" -o "$WAN" -p tcp -m multiport --dports 80,443 -j ACCEPT
   iptables -A FORWARD -i "$DMZ" -o "$WAN" -p icmp --icmp-type echo-request -j ACCEPT
 
   # LAN -> serveur web : HTTP/HTTPS et ping

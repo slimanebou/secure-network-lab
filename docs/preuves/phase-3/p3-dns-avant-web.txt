@@ -1,0 +1,7 @@
+$ dig +time=2 +tries=1 @192.168.204.2 deb.debian.org
+;; communications error to 192.168.204.2#53: timed out
+
+; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> +time=2 +tries=1 @192.168.204.2 deb.debian.org
+; (1 server found)
+;; global options: +cmd
+;; no servers could be reached
