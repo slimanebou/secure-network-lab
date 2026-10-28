@@ -1,0 +1,330 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Secure Network Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : fiche technique de baie — schéma en tête, suivi des phases, puis tableaux de référence */
+:root{
+  --bg:#f3f5f7; --panel:#ffffff; --fg:#17202b; --muted:#5b6876; --line:#c9d1da;
+  --accent:#d9771f; --wan:#6b7a8c; --dmz:#c2410c; --lan:#1d6fb8; --vpn:#7c3aed; --mon:#0f8a6c;
+  --ok:#15803d; --ko:#b91c1c; --dim:.22;
+  --f-disp:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --panel:#18202a; --fg:#e4e9ef; --muted:#93a1b0; --line:#2e3a48;
+  --accent:#f0954a; --wan:#8fa0b4; --dmz:#f07a4a; --lan:#5aa8ec; --vpn:#a98bf5; --mon:#3cc59f;
+  --ok:#4ade80; --ko:#f87171; --dim:.18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --panel:#18202a; --fg:#e4e9ef; --muted:#93a1b0; --line:#2e3a48;
+  --accent:#f0954a; --wan:#8fa0b4; --dmz:#f07a4a; --lan:#5aa8ec; --vpn:#a98bf5; --mon:#3cc59f;
+  --ok:#4ade80; --ko:#f87171; --dim:.18; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+h1,h2{font-family:var(--f-disp);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+h2{font-size:20px;font-weight:700;display:flex;align-items:baseline;gap:10px}
+h2 small{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header p{color:var(--muted);max-width:65ch;margin:8px 0 0}
+section{display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.mono{font-family:var(--f-mono)}
+/* progression */
+.prog{display:flex;flex-direction:column;gap:12px;padding:18px}
+.bar-text{font-family:var(--f-mono);font-size:14px;white-space:pre-wrap;word-break:break-word}
+.phases{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ph{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:5px;cursor:pointer;background:transparent;color:inherit;text-align:left;font:inherit}
+.ph:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ph .n{font-family:var(--f-mono);font-weight:500;min-width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--muted);font-size:13px;flex:none}
+.ph .t{font-size:13.5px;min-width:0}
+.ph .t b{display:block;font-weight:600}
+.ph .t span{color:var(--muted);font-size:12.5px}
+.ph.done .n{background:var(--ok);border-color:var(--ok);color:var(--panel)}
+.ph.cur{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.ph.cur .n{border-color:var(--accent);color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:500 13px var(--f-body);padding:6px 12px;border-radius:4px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:12.5px;color:var(--muted)}
+/* schéma */
+.diagram{overflow-x:auto;padding:8px}
+.diagram svg{display:block;min-width:760px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--fg)}
+svg .lbl{font-size:12px}
+svg .sm{font-size:11px;fill:var(--muted)}
+svg .ttl{font-family:var(--f-disp);font-weight:700;font-size:15px}
+svg .zone-t{font-family:var(--f-disp);font-weight:700;font-size:12px;letter-spacing:.06em}
+svg .el{transition:opacity .25s}
+svg .el.off{opacity:var(--dim)}
+svg .el.now .badge circle{stroke:var(--accent);stroke-width:2.5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);padding:0 10px 10px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+/* tableaux */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:620px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-weight:500;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.mono{font-size:12.5px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.ko{color:var(--ko)}
+.pn{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2>*{min-width:0}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.pitch{padding:18px 20px;font-size:15px;max-width:none}
+.pitch p{margin:0;max-width:65ch}
+@media (prefers-reduced-motion:reduce){svg .el{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Projet réseau · 4 VMs Debian · VMware Workstation</div>
+  <h1>Secure Network Lab</h1>
+  <p>Routeur-pare-feu Linux avec iptables, DMZ web en HTTPS signée par une CA interne, administration uniquement par VPN WireGuard, supervision Zabbix/SNMP, analyse de trafic et script de diagnostic.</p>
+</header>
+
+<section>
+  <h2>Progression <small>clique une phase pour la cocher</small></h2>
+  <div class="panel prog">
+    <div class="bar-text" id="barText"></div>
+    <div class="phases" id="phases"></div>
+    <div class="actions">
+      <button class="btn" id="reset" type="button">Tout décocher</button>
+      <span class="hint">Sur le schéma, ce qui n'est pas encore construit est estompé. La phase en cours est entourée en orange.</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Architecture <small>le numéro = phase de construction</small></h2>
+  <div class="panel">
+  <div class="diagram">
+  <svg viewBox="0 0 900 640" role="img" aria-label="Schéma du lab : gw relie Internet, la DMZ et le LAN ; l'admin passe par WireGuard">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--muted)"/></marker>
+    </defs>
+
+    <!-- WAN -->
+    <g class="el" data-p="0">
+      <rect x="330" y="16" width="240" height="56" rx="28" style="fill:var(--panel);stroke:var(--wan);stroke-width:1.5;stroke-dasharray:5 4"/>
+      <text x="450" y="40" text-anchor="middle" class="ttl">Internet</text>
+      <text x="450" y="58" text-anchor="middle" class="sm">NAT VMware · vmnet8</text>
+    </g>
+
+    <!-- Admin Windows -->
+    <g class="el" data-p="4">
+      <rect x="24" y="16" width="220" height="70" rx="5" style="fill:var(--panel);stroke:var(--vpn);stroke-width:1.5"/>
+      <text x="40" y="40" class="ttl">Admin · hôte Windows</text>
+      <text x="40" y="58" class="lbl">wg0 10.8.0.2</text>
+      <text x="40" y="75" class="sm">Wireshark (analyse .pcap)</text>
+      <g class="badge" transform="translate(232,16)"><circle r="12" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="lbl">4</text></g>
+    </g>
+
+    <!-- tunnel WG -->
+    <g class="el" data-p="4">
+      <path d="M134 86 C134 140 200 170 296 178" style="fill:none;stroke:var(--vpn);stroke-width:2.5;stroke-dasharray:8 5"/>
+      <text x="96" y="140" class="lbl" style="fill:var(--vpn)">tunnel WireGuard</text>
+      <text x="96" y="156" class="sm">51820/udp → WAN gw</text>
+    </g>
+
+    <!-- lien WAN-gw -->
+    <g class="el" data-p="1">
+      <line x1="450" y1="72" x2="450" y2="126" style="stroke:var(--wan);stroke-width:2"/>
+      <text x="460" y="104" class="sm">ens33 · DHCP</text>
+    </g>
+
+    <!-- gw -->
+    <g class="el" data-p="0">
+      <rect x="296" y="126" width="308" height="166" rx="5" style="fill:var(--panel);stroke:var(--fg);stroke-width:1.8"/>
+      <text x="312" y="150" class="ttl">gw · routeur / pare-feu</text>
+      <text x="312" y="166" class="sm">2 vCPU · 2 Go · Debian 13</text>
+    </g>
+    <g class="el" data-p="1"><text x="312" y="190" class="lbl">ip_forward · NAT MASQUERADE</text><g class="badge" transform="translate(590,186)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">1</text></g></g>
+    <g class="el" data-p="2"><text x="312" y="208" class="lbl">iptables DROP défaut · DNAT · LOG</text><g class="badge" transform="translate(590,204)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">2</text></g></g>
+    <g class="el" data-p="3"><text x="312" y="226" class="lbl">dnsmasq · *.lab.internal</text><g class="badge" transform="translate(590,222)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">3</text></g></g>
+    <g class="el" data-p="4"><text x="312" y="244" class="lbl" style="fill:var(--vpn)">wg0 10.8.0.1 · SSH sur wg0 seul</text><g class="badge" transform="translate(590,240)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">4</text></g></g>
+    <g class="el" data-p="6"><text x="312" y="262" class="lbl" style="fill:var(--mon)">snmpd :161 · agent Zabbix</text><g class="badge" transform="translate(590,258)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">6</text></g></g>
+    <g class="el" data-p="8"><text x="312" y="280" class="lbl">check-lab.sh</text><g class="badge" transform="translate(590,276)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">8</text></g></g>
+
+    <!-- liens gw -> zones -->
+    <g class="el" data-p="0">
+      <path d="M360 292 L360 330 L230 330 L230 372" style="fill:none;stroke:var(--dmz);stroke-width:2"/>
+      <text x="238" y="324" class="sm">ens37 · 10.10.10.1</text>
+      <path d="M540 292 L540 330 L670 330 L670 372" style="fill:none;stroke:var(--lan);stroke-width:2"/>
+      <text x="548" y="324" class="sm">ens38 · 10.10.20.1</text>
+    </g>
+
+    <!-- capture tcpdump -->
+    <g class="el" data-p="7">
+      <rect x="388" y="300" width="124" height="44" rx="4" style="fill:var(--panel);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 3"/>
+      <text x="450" y="318" text-anchor="middle" class="lbl">tcpdump -w</text>
+      <text x="450" y="334" text-anchor="middle" class="sm">captures .pcap</text>
+      <g class="badge" transform="translate(512,300)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">7</text></g>
+    </g>
+
+    <!-- zone DMZ -->
+    <g class="el" data-p="0">
+      <rect x="24" y="372" width="412" height="250" rx="8" style="fill:none;stroke:var(--dmz);stroke-width:1.4;stroke-dasharray:6 5"/>
+      <text x="40" y="394" class="zone-t" style="fill:var(--dmz)">DMZ · 10.10.10.0/24 · vmnet2</text>
+      <rect x="60" y="412" width="340" height="190" rx="5" style="fill:var(--panel);stroke:var(--fg);stroke-width:1.5"/>
+      <text x="76" y="436" class="ttl">web · 10.10.10.10</text>
+      <text x="76" y="452" class="sm">2 vCPU · 2 Go</text>
+    </g>
+    <g class="el" data-p="3"><text x="76" y="480" class="lbl">Nginx :80</text><g class="badge" transform="translate(384,476)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">3</text></g></g>
+    <g class="el" data-p="5"><text x="76" y="502" class="lbl">HTTPS :443 · 80 → 301</text><g class="badge" transform="translate(384,498)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">5</text></g></g>
+    <g class="el" data-p="5"><text x="76" y="524" class="lbl">certificat signé par la CA interne</text></g>
+    <g class="el" data-p="4"><text x="76" y="546" class="lbl">SSH : uniquement depuis 10.8.0.0/24</text><g class="badge" transform="translate(384,542)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">4</text></g></g>
+    <g class="el" data-p="6"><text x="76" y="568" class="lbl" style="fill:var(--mon)">agent Zabbix :10050</text><g class="badge" transform="translate(384,564)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">6</text></g></g>
+
+    <!-- zone LAN -->
+    <g class="el" data-p="0">
+      <rect x="464" y="372" width="412" height="250" rx="8" style="fill:none;stroke:var(--lan);stroke-width:1.4;stroke-dasharray:6 5"/>
+      <text x="480" y="394" class="zone-t" style="fill:var(--lan)">LAN · 10.10.20.0/24 · vmnet3</text>
+      <rect x="484" y="412" width="372" height="76" rx="5" style="fill:var(--panel);stroke:var(--fg);stroke-width:1.5"/>
+      <text x="500" y="436" class="ttl">client · 10.10.20.10</text>
+      <text x="500" y="454" class="sm">2 vCPU · 2 Go · utilisateur LAN</text>
+    </g>
+    <g class="el" data-p="6"><text x="500" y="476" class="lbl" style="fill:var(--mon)">agent Zabbix :10050</text><g class="badge" transform="translate(840,472)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">6</text></g></g>
+    <g class="el" data-p="6">
+      <rect x="484" y="504" width="372" height="98" rx="5" style="fill:var(--panel);stroke:var(--mon);stroke-width:1.8"/>
+      <text x="500" y="528" class="ttl">mon · 10.10.20.20</text>
+      <text x="500" y="546" class="sm">2 vCPU · 4 Go</text>
+      <text x="500" y="568" class="lbl" style="fill:var(--mon)">Zabbix server + interface web</text>
+      <text x="500" y="588" class="sm">UI accessible par le VPN uniquement</text>
+      <g class="badge" transform="translate(840,516)"><circle r="10" style="fill:var(--panel);stroke:var(--muted);stroke-width:1.2"/><text text-anchor="middle" y="4" class="sm" style="fill:var(--fg)">6</text></g>
+    </g>
+    <!-- flux supervision -->
+    <g class="el" data-p="6">
+      <path d="M484 560 C440 560 440 568 400 568" style="fill:none;stroke:var(--mon);stroke-width:1.6;stroke-dasharray:3 3" marker-end="url(#arr)"/>
+      <path d="M620 504 C620 470 610 300 604 268" style="fill:none;stroke:var(--mon);stroke-width:1.6;stroke-dasharray:3 3" marker-end="url(#arr)"/>
+      <text x="626" y="352" class="sm" style="fill:var(--mon)">161/udp · 10050/tcp</text>
+    </g>
+  </svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--wan)"></i>WAN</span>
+    <span><i style="background:var(--dmz)"></i>DMZ</span>
+    <span><i style="background:var(--lan)"></i>LAN</span>
+    <span><i style="background:var(--vpn)"></i>VPN admin</span>
+    <span><i style="background:var(--mon)"></i>Supervision</span>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>Plan d'adressage</h2>
+  <div class="panel tbl">
+  <table>
+    <thead><tr><th>Machine</th><th>Interface</th><th>Adresse</th><th>Réseau VMware</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><b>gw</b></td><td class="mono">ens33</td><td class="mono">DHCP</td><td class="mono">vmnet8 (NAT)</td><td>WAN, sortie Internet</td></tr>
+      <tr><td class="mono">ens37</td><td class="mono">10.10.10.1/24</td><td class="mono">vmnet2</td><td>Passerelle DMZ</td></tr>
+      <tr><td class="mono">ens38</td><td class="mono">10.10.20.1/24</td><td class="mono">vmnet3</td><td>Passerelle LAN</td></tr>
+      <tr><td class="mono">wg0</td><td class="mono">10.8.0.1/24</td><td class="mono">tunnel</td><td>Serveur VPN</td></tr>
+      <tr><td><b>web</b></td><td class="mono">ens33</td><td class="mono">10.10.10.10/24</td><td class="mono">vmnet2</td><td>Nginx HTTPS</td></tr>
+      <tr><td><b>client</b></td><td class="mono">ens33</td><td class="mono">10.10.20.10/24</td><td class="mono">vmnet3</td><td>Utilisateur LAN</td></tr>
+      <tr><td><b>mon</b></td><td class="mono">ens33</td><td class="mono">10.10.20.20/24</td><td class="mono">vmnet3</td><td>Zabbix server</td></tr>
+      <tr><td><b>Admin</b></td><td class="mono">wg0</td><td class="mono">10.8.0.2/32</td><td class="mono">tunnel</td><td>Hôte Windows</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="hint">Les noms d'interfaces (ens33…) dépendent de ta VM : vérifie-les avec <span class="mono">ip -br a</span> en phase 0.</p>
+</section>
+
+<section>
+  <h2>Matrice des flux</h2>
+  <div class="panel tbl">
+  <table>
+    <thead><tr><th>Source</th><th>Destination</th><th>Port</th><th>Décision</th><th>Phase</th></tr></thead>
+    <tbody>
+      <tr><td>LAN, DMZ</td><td>Internet</td><td class="mono">tout (NAT)</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">1</td></tr>
+      <tr><td>Internet</td><td>web (DNAT via gw)</td><td class="mono">80, 443/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">2 · 5</td></tr>
+      <tr><td>Internet</td><td>gw (reste)</td><td class="mono">tout</td><td><span class="pill ko">DROP + LOG</span></td><td class="pn">2</td></tr>
+      <tr><td>LAN</td><td>web</td><td class="mono">80, 443/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">2</td></tr>
+      <tr><td>DMZ</td><td>LAN</td><td class="mono">tout</td><td><span class="pill ko">DROP + LOG</span></td><td class="pn">2</td></tr>
+      <tr><td>LAN, DMZ</td><td>gw (dnsmasq)</td><td class="mono">53/udp, 53/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">3</td></tr>
+      <tr><td>Admin Windows</td><td>gw WAN</td><td class="mono">51820/udp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">4</td></tr>
+      <tr><td>VPN 10.8.0.0/24</td><td>gw, web, mon</td><td class="mono">22/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">4</td></tr>
+      <tr><td>LAN, Internet</td><td>toute machine</td><td class="mono">22/tcp</td><td><span class="pill ko">DROP</span></td><td class="pn">4</td></tr>
+      <tr><td>mon</td><td>gw, web, client</td><td class="mono">10050/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">6</td></tr>
+      <tr><td>mon</td><td>gw</td><td class="mono">161/udp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">6</td></tr>
+      <tr><td>VPN 10.8.0.0/24</td><td>mon (UI Zabbix)</td><td class="mono">80/tcp</td><td><span class="pill ok">ACCEPT</span></td><td class="pn">6</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="grid2">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <h2>Pitch recruteur <small>30 s</small></h2>
+    <div class="panel pitch"><p>J'ai construit un réseau d'entreprise miniature sur 4 VMs Debian. Un routeur Linux filtre tout avec iptables, en politique « tout refuser sauf ce qui est autorisé », et isole une DMZ web du LAN. Le site est servi en HTTPS avec un certificat signé par ma propre autorité de certification. L'administration passe uniquement par un VPN WireGuard : SSH est fermé partout ailleurs. Zabbix supervise les machines par agent et par SNMP, j'ai validé les règles en capturant le trafic avec tcpdump et Wireshark, et un script Bash vérifie tout le lab en une commande.</p></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <h2>Compétences démontrées</h2>
+    <div class="panel tbl">
+    <table style="min-width:0">
+      <tbody>
+        <tr><td>Routage et NAT Linux</td><td class="pn">1</td></tr>
+        <tr><td>Filtrage stateful iptables, DNAT, journalisation</td><td class="pn">2</td></tr>
+        <tr><td>DNS interne</td><td class="pn">3</td></tr>
+        <tr><td>VPN WireGuard, durcissement SSH</td><td class="pn">4</td></tr>
+        <tr><td>PKI interne, TLS</td><td class="pn">5</td></tr>
+        <tr><td>Supervision SNMP / Zabbix</td><td class="pn">6</td></tr>
+        <tr><td>Analyse de paquets</td><td class="pn">7</td></tr>
+        <tr><td>Scripting ops Bash</td><td class="pn">8</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+const PH=[
+ ["Préparation","4 VMs, vmnets, dépôt Git"],
+ ["Routage + NAT","ip_forward, MASQUERADE"],
+ ["Pare-feu iptables","DROP défaut, DNAT, LOG"],
+ ["Nginx + DNS","web en DMZ, dnsmasq"],
+ ["WireGuard + SSH","admin par VPN seul"],
+ ["PKI / TLS","CA openssl, HTTPS forcé"],
+ ["Zabbix","agents, SNMP, règles"],
+ ["Analyse trafic","tcpdump, Wireshark"],
+ ["check-lab.sh","diagnostic en 1 commande"],
+ ["Documentation","README, release, fiche"]
+];
+const KEY="snl-done";
+let done=new Set();
+try{const s=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(s))done=new Set(s)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify([...done]))}catch(e){}}
+function current(){for(let i=0;i<PH.length;i++)if(!done.has(i))return i;return -1}
+function render(){
+  const cur=current(), n=done.size;
+  const bar="█".repeat(n)+"░".repeat(PH.length-n);
+  const st=cur<0?"Projet terminé":"Phase "+cur+" en cours";
+  const marks=PH.map((_,i)=>(done.has(i)?"✅":i===cur?"🔄":"⬜")+" "+i).join("  ");
+  document.getElementById("barText").textContent="Progression : "+bar+" "+n+"/"+PH.length+" — "+st+"\n"+marks;
+  const box=document.getElementById("phases");box.innerHTML="";
+  PH.forEach((p,i)=>{
+    const b=document.createElement("button");b.type="button";b.id="ph"+i;
+    b.className="ph"+(done.has(i)?" done":"")+(i===cur?" cur":"");
+    b.setAttribute("aria-pressed",done.has(i));
+    b.innerHTML='<span class="n">'+(done.has(i)?"✓":i)+'</span><span class="t"><b>'+p[0]+'</b><span>'+p[1]+'</span></span>';
+    b.onclick=()=>{done.has(i)?done.delete(i):done.add(i);save();render()};
+    box.appendChild(b);
+  });
+  document.querySelectorAll("svg .el").forEach(el=>{
+    const p=+el.dataset.p;
+    el.classList.toggle("off",!done.has(p)&&p!==cur);
+    el.classList.toggle("now",p===cur);
+  });
+}
+document.getElementById("reset").onclick=()=>{done.clear();save();render()};
+render();
+</script>
+
+</body></html>
