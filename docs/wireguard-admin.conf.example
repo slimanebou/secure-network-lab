@@ -4,5 +4,5 @@ Address = 10.8.0.2/32
 
 [Peer]
 PublicKey = <CLE_PUBLIQUE_GW>
-AllowedIPs = 10.8.0.0/24
+AllowedIPs = 10.8.0.0/24, 10.10.20.20/32
 Endpoint = <IP_WAN_GW>:51820

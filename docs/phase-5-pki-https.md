@@ -14,11 +14,22 @@ Créer une autorité de certification interne, signer le certificat du serveur w
 ## Preuves clés
 Avant d'installer la CA sur client :
 ```
-[colle ici l'erreur curl (60)]
+bouaroua@client:~$ curl https://web.lab.internal
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the webpage mentioned above.
 ```
 Après :
 ```
-[colle ici « Verify return code: 0 (ok) » et le HTTP/2 200]
+bouaroua@client:~$ curl -sIL http://web.lab.internal | grep -E "^HTTP|^Location"
+HTTP/1.1 301 Moved Permanently
+Location: https://web.lab.internal/
+HTTP/2 200
+bouaroua@client:~$ openssl s_client -connect web.lab.internal:443 -servername web.lab.internal </dev/null 2>/dev/null | grep "Verify return code"
+Verify return code: 0 (ok)
 ```
 
 ## Limites et améliorations

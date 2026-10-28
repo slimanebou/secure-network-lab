@@ -10,6 +10,7 @@ set -euo pipefail
 WAN=ens33                    # Carte NAT VMware (Internet)
 DMZ=ens37                    # Carte DMZ  (vmnet2)
 LAN=ens38                    # Carte LAN  (vmnet3)
+MON=10.10.20.20              # Serveur de supervision (Zabbix)
 
 VPN=wg0                      # Carte du tunnel WireGuard
 VPN_PORT=51820               # Port UDP de WireGuard
@@ -66,6 +67,9 @@ start() {
   # LAN -> serveur web : HTTP/HTTPS et ping
   iptables -A FORWARD -i "$LAN" -o "$DMZ" -d "$WEB" -p tcp -m multiport --dports 80,443 -j ACCEPT
   iptables -A FORWARD -i "$LAN" -o "$DMZ" -p icmp --icmp-type echo-request -j ACCEPT
+
+  # VPN admin -> interface web de Zabbix
+  iptables -A FORWARD -i "$VPN" -o "$LAN" -d "$MON" -p tcp --dport 80 -j ACCEPT
 
   # Internet -> serveur web : HTTP/HTTPS (redirigé par le DNAT ci-dessous)
   iptables -A FORWARD -i "$WAN" -o "$DMZ" -d "$WEB" -p tcp -m multiport --dports 80,443 -j ACCEPT
