@@ -52,6 +52,9 @@ start() {
   iptables -A INPUT -i "$LAN" -p udp --dport 53 -j ACCEPT
   iptables -A INPUT -i "$LAN" -p tcp --dport 53 -j ACCEPT
 
+  # Supervision : mon interroge l'agent de gw
+  iptables -A INPUT -i "$LAN" -s "$MON" -p tcp --dport 10050 -j ACCEPT
+
   # 4. FORWARD : ce qui TRAVERSE gw
   iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
@@ -70,6 +73,9 @@ start() {
 
   # VPN admin -> interface web de Zabbix
   iptables -A FORWARD -i "$VPN" -o "$LAN" -d "$MON" -p tcp --dport 80 -j ACCEPT
+
+  # Supervision : mon interroge l'agent de web
+  iptables -A FORWARD -i "$LAN" -o "$DMZ" -s "$MON" -d "$WEB" -p tcp --dport 10050 -j ACCEPT
 
   # Internet -> serveur web : HTTP/HTTPS (redirigé par le DNAT ci-dessous)
   iptables -A FORWARD -i "$WAN" -o "$DMZ" -d "$WEB" -p tcp -m multiport --dports 80,443 -j ACCEPT
