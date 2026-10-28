@@ -55,6 +55,9 @@ start() {
   # Supervision : mon interroge l'agent de gw
   iptables -A INPUT -i "$LAN" -s "$MON" -p tcp --dport 10050 -j ACCEPT
 
+  # Supervision : mon interroge gw en SNMP
+  iptables -A INPUT -i "$LAN" -s "$MON" -p udp --dport 161 -j ACCEPT
+
   # 4. FORWARD : ce qui TRAVERSE gw
   iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A FORWARD -m conntrack --ctstate INVALID -j DROP
