@@ -23,3 +23,18 @@ Capture avec `tcpdump -w` sur gw (là où tout le trafic passe), analyse dans Wi
 SYN de web vers client:22 visibles sur ens37, retransmis à 1 s puis 2 s, aucun paquet sur ens38, lignes `FW-DROP-FWD` dans les logs : le paquet est jeté par la chaîne FORWARD.
 
 ![Paquet bloqué](captures/p7-drop.png)
+
+
+## ✅ Vérification automatique : `check-lab.sh`
+
+Un script de non-régression rejoue **21 tests** depuis la machine concernée (par SSH, via le VPN et le bastion) : accès d'administration, services, routage, pare-feu, DNS, HTTPS et supervision. Chaque test indique s'il doit **réussir** ou **échouer** : un test de sécurité vérifie souvent qu'un flux interdit est bien bloqué.
+
+```bash
+./scripts/check-lab.sh      # code retour 0 = tout est OK, 1 = au moins un échec
+```
+
+| Tout fonctionne | Nginx arrêté sur web |
+|---|---|
+| ![check OK](captures/p8-check-ok.png) | ![check en panne](captures/p8-check-panne.png) |
+
+Un seul service arrêté fait échouer 4 tests : le script montre immédiatement l'étendue d'une panne. Le code retour permet de l'utiliser dans une tâche planifiée ou une CI.
