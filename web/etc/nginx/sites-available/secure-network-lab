@@ -1,0 +1,28 @@
+# =====================================================================
+# Site du Secure Network Lab : HTTPS obligatoire
+# =====================================================================
+
+# 1. HTTP (port 80) : redirection systématique vers HTTPS
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+# 2. HTTPS (port 443) : le vrai site
+server {
+    listen 443 ssl default_server;
+    http2 on;
+    server_name web.lab.internal web 10.10.10.10 192.168.204.140;
+
+    ssl_certificate     /etc/ssl/certs/web.lab.internal.crt;
+    ssl_certificate_key /etc/ssl/private/web.lab.internal.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+
+    root  /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
