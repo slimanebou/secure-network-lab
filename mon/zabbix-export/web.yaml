@@ -1,0 +1,34 @@
+zabbix_export:
+  version: '7.0'
+  host_groups:
+    - uuid: dc579cd7a1a34222933f24f52a68bcd8
+      name: 'Linux servers'
+  hosts:
+    - host: web
+      name: web
+      templates:
+        - name: 'Linux by Zabbix agent'
+      groups:
+        - name: 'Linux servers'
+      interfaces:
+        - ip: 10.10.10.10
+          interface_ref: if1
+      items:
+        - name: 'Site HTTPS : disponibilité'
+          type: SIMPLE
+          key: 'net.tcp.service[https,,443]'
+          delay: 30s
+          interface_ref: if1
+          triggers:
+            - expression: 'max(/web/net.tcp.service[https,,443],1m)=0'
+              name: 'Le site HTTPS ne répond plus sur {HOST.NAME}'
+              priority: DISASTER
+        - name: 'Nginx : nombre de processus'
+          key: 'proc.num[nginx]'
+          delay: 30s
+          interface_ref: if1
+          triggers:
+            - expression: 'last(/web/proc.num[nginx])=0'
+              name: 'Nginx est arrêté sur {HOST.NAME}'
+              priority: HIGH
+      inventory_mode: DISABLED
